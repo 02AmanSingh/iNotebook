@@ -1,12 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const User = require('../models/User');
-const { validationResult, checkSchema, matchedData } = require('express-validator');
+const { validationResult, checkSchema, matchedData, body } = require('express-validator');
 const UservalidationSchema = require("../Validator/ValidationSchema");
-const hashPassword = require('../hashed');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const fetchUser = require('../middlewares/fetchUser');
 const JWT_SECRET = "I'mAmanSingh@02";
 
 
@@ -17,14 +16,10 @@ router.get('/', (req, res) => {
     res.send("hello").status(200);
 });
 
+//Create new User..
 router.post('/createUser', checkSchema(UservalidationSchema)
-    // Validation Schema...
-    /*[
-        body('name').isLength({min: 5}),
-        body('email').isEmail(),
-        body('password').isLength({min: 7}),
-    ],*/
     , async (req, res) => {
+        //To check the errors, if errors return bad req.
         const result = validationResult(req);
         if (!result.isEmpty()) {
             return res.status(400).json({ errors: result.array() });
@@ -53,7 +48,7 @@ router.post('/createUser', checkSchema(UservalidationSchema)
             });
 
             const data = {
-                user:{
+                user: {
                     id: user.id,
                 }
             };
@@ -63,10 +58,64 @@ router.post('/createUser', checkSchema(UservalidationSchema)
             res.status(200).send(authToken);
         }
         //catch errors..
-        catch (error){
+        catch (error) {
             console.log(error.message);
-            res.status(500).send("Some Error occured.")
+            res.status(500).send("Internal server Error occured.")
         }
 });
+
+
+
+//Authenticate a User.(Login)
+router.post('/login', [
+    body('email').isString().notEmpty().isEmail().withMessage({msg: "Enter a valid email."}),
+    body('email').notEmpty().withMessage({msg: "Password should not be blank."}),
+], async (req, res)=>{
+    //To check the errors, if errors return bad req.
+    const result = validationResult(req);
+    if(!result.isEmpty()){
+        return res.status(400).json({errors: result.array()});
+    };
+    
+    const{email, password}= req.body;
+    try{
+        let user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({error: "Please login with correct credentials."});
+        }
+        const comparePassword = await bcrypt.compare(password, user.password);
+        if(!comparePassword){
+            return res.status(400).json({error: "Please login with correct credentials."});
+        };
+        const data = {
+            user: {
+                id: user.id,
+            }
+        };
+        const authToken = jwt.sign(data, JWT_SECRET);
+        res.send(authToken);
+
+    }
+    catch(error){
+        console.log(error.message);
+        res.status(500).send("Internal server error occured.");
+    }
+
+});
+
+
+//Get loggedin.. Fetch User details...Login required..
+router.post('/getUser', fetchUser, async(req, res)=>{
+    try {
+       const userId = req.user.id;
+       const user = await User.findById(userId).select("-password"); 
+       res.send(user);
+    } 
+    catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal server occured.");
+    }
+});
+
 
 module.exports = router; 

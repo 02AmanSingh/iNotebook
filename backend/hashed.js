@@ -8,6 +8,6 @@ module.exports = hashPassword = async (password)=> {
     return await bcrypt.hash(password, salt);
 };
 
-module.exports = comparePassword = (plain, hashed)=>{
-    bcrypt.compareSync(plain, hashed);
-}
+module.exports = comparePassword = async (plain, hashed)=>{
+    await bcrypt.compare(plain, hashed);
+};
