@@ -4,7 +4,7 @@ const About = () => {
   
   
   return (
-    <div style={{margin: '4rem 0 0 0'}}>
+    <div className="container my-3" >
       <h1>This is About page.</h1>
     </div>
   )
