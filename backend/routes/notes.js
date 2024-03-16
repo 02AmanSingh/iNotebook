@@ -3,7 +3,7 @@ const router = express.Router();
 const Notes = require('../models/Notes');
 const fetchUser = require('../middlewares/fetchUser');
 const { checkSchema, validationResult } = require('express-validator');
-const NotesValidtionSchema = require('../Validator/ValidationSchema');
+const NotesValidtionSchema = require('../Validator/NotesValidationSchema');
 
 //Get All notes..
 router.get('/fetchallnotes', fetchUser, async (req, res) => {
