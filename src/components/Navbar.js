@@ -1,7 +1,13 @@
 import React from 'react'
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+
+  let history = useNavigate();
+  const handleLogout = ()=>{
+    localStorage.removeItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjVlMGJlMDQxZjVkNzMzODFiYzNjNWQwIn0sImlhdCI6MTcwOTI3NjM4Mn0.VpGOIaWmmaIzKgGUuQSuTLPXAeVO7I-3TcifEZWgzVo");
+    history('/login');
+  }
 
   let location = useLocation();
   return (
@@ -20,10 +26,10 @@ const Navbar = () => {
               <Link className={`nav-link ${location.pathname === "/about" ? "active" : ""}`} to="/about">About</Link>
             </li>
           </ul>
-          <form className="form-inline my-2 my-lg-0">
+          {!localStorage.getItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjVlMGJlMDQxZjVkNzMzODFiYzNjNWQwIn0sImlhdCI6MTcwOTI3NjM4Mn0.VpGOIaWmmaIzKgGUuQSuTLPXAeVO7I-3TcifEZWgzVo") ? <form className="form-inline my-2 my-lg-0">
               <Link className="btn btn-primary mx-1" to="/login" role="button">Login</Link>
               <Link className="btn btn-primary mx-1" to="/signup" role="button">Sign up</Link>
-            </form> 
+            </form>: <button onClick={handleLogout} className='btn btn-primary'>Logout</button> } 
         </div>
       </div>
     </nav>

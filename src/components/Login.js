@@ -19,7 +19,7 @@ const Login = (props) => {
         console.log(json);
         if (json.success){
             //redirect
-            localStorage.setItem('token', json.authtoken);
+            localStorage.setItem("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjVlMGJlMDQxZjVkNzMzODFiYzNjNWQwIn0sImlhdCI6MTcwOTI3NjM4Mn0.VpGOIaWmmaIzKgGUuQSuTLPXAeVO7I-3TcifEZWgzVo", json.authtoken);
             props.showAlert("Logged in successfully.", "success");
             history("/");
         }
@@ -34,6 +34,7 @@ const Login = (props) => {
 
     return (
         <div>
+        <h2>Login to continue to iNotebook</h2>
             <form onSubmit={handleSubmit} >
                 <div className="mb-3 my-3">
                     <label htmlFor="email" className="form-label">Email address</label>
